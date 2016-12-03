@@ -1,0 +1,17 @@
+{
+  "name": "fruit",
+  "version": "0.0.0",
+  "description": "An electron-vue project",
+  "main": "electron.js",
+  "dependencies": {
+    "vue": "^2.0.1",
+    "vue-electron": "^1.0.0",
+    "vue-resource": "^1.0.3",
+    "vue-router": "^2.0.0",
+    "vuex": "^2.0.0"
+  },
+  "devDependencies": {
+    "element-ui": "^1.0.3"
+  },
+  "author": "crab1127 <crab1127@gmail.com>"
+}
