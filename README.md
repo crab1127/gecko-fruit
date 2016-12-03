@@ -1,6 +1,6 @@
 # fruit
 
-> An electron-vue project
+> 部署程序
 
 ## Build Setup
 
