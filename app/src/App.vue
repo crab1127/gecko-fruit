@@ -23,14 +23,15 @@
 <template>
   <el-row class="container">
     <el-col :span="6" class="side">
-      <el-button-group>
+      <!-- <el-button-group>
         <el-button icon="arrow-left" @click.native="$router.go(-1)"></el-button>
         <el-button @click.native="$router.go(1)"><i class="el-icon-arrow-right el-icon--right"></i></el-button>
-      </el-button-group>
-      <div class="grid-content bg-purple-dark">
-        <div>用户名</div>
-      </div>
-      <div>全部项目</div>
+      </el-button-group> -->
+      <ul>
+        <li><router-link :to="{name: 'project'}">全部项目</router-link></li>
+        <li><router-link :to="{name: 'assets'}">资产中心</router-link></li>
+        <li><router-link :to="{name: 'set'}">设置</router-link></li>
+      </ul>
     </el-col>
     <el-col :span="18"><router-view></router-view></el-col>
   </el-row>

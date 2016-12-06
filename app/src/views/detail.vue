@@ -1,7 +1,18 @@
 <template>
-  <div>
-    首页
-  </div>
+  <main>
+    <el-tabs :active-name="activeName">
+      <el-tab-pane label="测试环境" name="first">
+        <el-button type="primary">
+          发布到测试环境
+        </el-button>
+      </el-tab-pane>
+      <el-tab-pane label="正式环境" name="second">
+        <el-button type="primary">
+          发布到正式环境
+        </el-button>
+      </el-tab-pane>
+    </el-tabs>
+  </main> 
 </template>
 
 <script>
@@ -10,8 +21,7 @@
   export default {
     data() {
       return {
-        platform: os.platform(),
-        versions: process.versions
+        activeName: 'first'
       }
     }
   }

@@ -3,7 +3,9 @@
 const electron = require('electron')
 const path = require('path')
 const app = electron.app
+const ipcMain = electron.ipcMain
 const BrowserWindow = electron.BrowserWindow
+const shell = require('shelljs')
 
 let mainWindow
 let config = {}
@@ -17,6 +19,29 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 function createWindow () {
+  // shell 放在主进程中
+  ipcMain.on('shell:which', (event, command) => {
+    event.sender.send('shell:which', shell.which(command))
+  })
+  ipcMain.on('shell:exec', (event, ...commands) => {
+    const promises = commands.map(command => {
+      new Promise((resolve, reject) => {
+        const child = shell.exec(command, { async: true, silent: true })
+
+        child.stdout.on('data', data => {
+          event.sender.send('shell:exec:stdout', data)
+        })
+        child.stderr.on('data', data => {
+          event.sender.send('shell:exec:stderr', data)
+        })
+        child.on('close', () => {
+          event.sender.send('shell:close', command)
+          resolve()
+        })
+      })
+    })
+    Promise.all(promises).then(() => event.sender.send('shell:close:all'))
+  })
   /**
    * Initial window options
    */
