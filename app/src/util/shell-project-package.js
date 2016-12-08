@@ -7,30 +7,44 @@
 require('shelljs/global')
 
 let projectName = process.argv[2]
-let branchName = process.argv[3] || 'dev'
+let branchName = process.argv[3] || 'develop'
 let commitText = process.argv[4] || ''
+
+if (!which('git')) {
+  echo('Error: 没有git命令')
+  exit(1)
+}
+
 
 // clone项目 
 cd('/Users/my/Web/project/' + projectName)
 
 // 更新最新代码
-exec('git branch dev')
-exec('git pull origin dev')
+if (exec('git checkout develop').code !== 0) {
+  echo('Error: 切换到分支失败')
+  exit(1)
+}
+if (exec('git pull origin develop').code !==0) {
+  echo('Error: 分支更新代码失败')
+  exit(1)
+}
 
 // 测试上线
-// if (branchName === 'dev') {
+// if (branchName === 'develop') {
 //   exec('npm run build')
 // } else 
+// 发布正式环境 合并分支
 if (branchName === 'master') {
-  exec('git branch master')
-  exec('git merge dev')
+  exec('git checkout master')
+  exec('git merge --no-ff develop')
   exec('git add .')
   exec('git commit -m ' + commitText)
   exec('git tag v1.0.1')
   exec('git push origin v1.0.1')
   exec('git push origin master')
 }
-exec('npm run build')
-
-echo('完结')
-exit(1)
+echo('------开始发biao--------')
+if (exec('npm run build').code !== 0) {
+  echo('------发biao失败--------')
+  exit(1)
+}

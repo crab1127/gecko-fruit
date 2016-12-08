@@ -51,7 +51,7 @@
     name: 'add-assets',
     computed: {
       ...mapGetters({
-        activeproject: 'activeproject',
+        activeproject: 'activeProject',
         assets: 'assets',
         userSet: 'userSet'
       }),
@@ -69,6 +69,11 @@
       ipcRenderer.on('shell:close', (event, data) => {
         this.$router.push({'name': 'project'})
       });
+    },
+    destroyed() {
+      ipcRenderer.removeAllListeners('shell:exec:stdout')
+      ipcRenderer.removeAllListeners('shell:exec:stderr')
+      ipcRenderer.removeAllListeners('shell:close')
     },
     methods: {
       onSubmit() {

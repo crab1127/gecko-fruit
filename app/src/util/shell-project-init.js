@@ -15,13 +15,9 @@ let projectName = gitPath.slice(gitPath.lastIndexOf('/') + 1, gitPath.lastIndexO
 
 // clone项目 
 cd('/Users/my/Web/project')
-var a = exec(`git clone ${gitPath}`)
-echo('clone', a)
+exec(`git clone ${gitPath}`)
 
 // 安装依赖
 cd(projectName)
-var b = exec('npm install vue')
-echo('install', b)
-
-echo('完结')
-exit(1)
+exec('npm install')
+exit()

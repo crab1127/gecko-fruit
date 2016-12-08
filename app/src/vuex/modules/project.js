@@ -3,14 +3,19 @@
  */
 
 let defaultMain = []
+let defaultPublishLog = {}
 
 localStorage['PROJECT'] && (defaultMain = JSON.parse(localStorage['PROJECT']))
+localStorage['PUBLISH_LOG'] && (defaultPublishLog = JSON.parse(localStorage['PUBLISH_LOG']))
 
 const state = {
   // 项目
   main: defaultMain,
 
   activeProject: {},
+
+  publishLog: {},
+  activePublishLog: []
 }
 
 const mutations = {
@@ -36,8 +41,21 @@ const mutations = {
   },
   SET_ACTIVE_PROJECT (state, data) {
     state.activeProject = {...data}
+  },
+  // 发布记录
+  PUBLISH_LOG (state, data) {
+    let active = state.publishLog[data.key]
+    if (active) {
+     active.push(data.value) 
+    } else {
+     state.publishLog[data.key] = [data.value] 
+    }
+    localStorage['PUBLISH_LOG'] = JSON.stringify(state.publishLog)
+  },
+  // 当前的发布记录
+  ACTIVE_PUBLISH_LOG (state, key) {
+    state.activePublishLog = state.publishLog[key]
   }
-
 }
 
 export default {

@@ -34,8 +34,8 @@ function createWindow () {
         child.stderr.on('data', data => {
           event.sender.send('shell:exec:stderr', data)
         })
-        child.on('close', () => {
-          event.sender.send('shell:close', command)
+        child.on('close', data => {
+          event.sender.send('shell:close', data)
           resolve()
         })
       })

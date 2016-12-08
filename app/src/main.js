@@ -14,7 +14,7 @@ Vue.use(Electron)
 Vue.use(ElementUI)
 Vue.config.debug = true
 
-// sync(store, router)
+sync(store, router)
 /* eslint-disable no-new */
 new Vue({
   router,
