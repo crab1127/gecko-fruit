@@ -20,10 +20,8 @@ if (!which('git')) {
 cd('/Users/my/Web/project/' + projectName)
 
 // 更新最新代码
-if (exec('git checkout develop').code !== 0) {
-  echo('Error: 切换到分支失败')
-  exit(1)
-}
+exec('git checkout develop')
+
 if (exec('git pull origin develop').code !==0) {
   echo('Error: 分支更新代码失败')
   exit(1)

@@ -8,12 +8,36 @@
   body { height: 100%; }
 
   body {
-    align-items: center;
+    line-height: 1.4;
+  }
+  header{
+    height: 50px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    background: #FF4949;
+    color: #fff;
+  }
+  .el-icon-menu,
+  .el-icon-d-arrow-left {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .el-icon-d-arrow-left {
+    float: right;
+  }
+  h1 {
+    font-size: 18px;
   }
   .container {
-    flex:1;
+    display: flex;
+    flex-direction: column;
+  }
+  .content{
+    flex: 1;
+    padding: 30px
   }
   .side {
     background: #f1f1f1;
@@ -21,26 +45,30 @@
 </style>
 
 <template>
-  <el-row class="container">
-    <el-col :span="6" class="side">
-      <!-- <el-button-group>
-        <el-button icon="arrow-left" @click.native="$router.go(-1)"></el-button>
-        <el-button @click.native="$router.go(1)"><i class="el-icon-arrow-right el-icon--right"></i></el-button>
-      </el-button-group> -->
-      <ul>
-        <li><router-link :to="{name: 'project'}">全部项目</router-link></li>
-        <li><router-link :to="{name: 'assets'}">资产中心</router-link></li>
-        <li><router-link :to="{name: 'set'}">设置</router-link></li>
-      </ul>
-    </el-col>
-    <el-col :span="18"><router-view></router-view></el-col>
+  <div class="container">
+    <header>
+      <i class="el-icon-menu" @click="menuVisible = true"></i>
+      <h1 @click="$router.push({name: 'project'})">前端发布工具</h1>
+    </header>
+    <router-view class="content"></router-view>
+    <sub-menu v-model="menuVisible"/>
+  </div>
   </el-row>
 </template>
 
 <script>
+  import subMenu from './components/subMenu'
   export default {
     name: 'app',
+    data() {
+      return {
+        menuVisible: false
+      }
+    },
     methods: {
+    },
+    components: {
+      subMenu
     }
   }
 </script>

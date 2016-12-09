@@ -1,9 +1,9 @@
 <template>
-  <main>
-    <el-button type="primary" @click="handleAdd()">
+  <main class="project-container">
+    <el-button type="primary" class="add-project" icon="plus" @click="handleAdd()">
       添加项目
     </el-button>
-    <el-row>
+    <el-row class="project-main">
       <el-col :span="8" v-for="(item, index) in projectData" :offset="index > 0 ? 2 : 0">
         <el-card :body-style="{ padding: '0px' }">
           <div style="padding: 14px;" @click="handleDetail(index, item)">
@@ -58,3 +58,21 @@
     }
   }
 </script>
+
+<style type="text/css">
+  .project-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .add-project {
+    width: 200px;
+    margin-bottom: 30px;
+  }
+  .project-main {
+    flex: 1;
+    width: 100%;
+    padding: 0 20px;
+  }
+</style>

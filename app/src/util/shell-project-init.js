@@ -15,9 +15,16 @@ let projectName = gitPath.slice(gitPath.lastIndexOf('/') + 1, gitPath.lastIndexO
 
 // clone项目 
 cd('/Users/my/Web/project')
-exec(`git clone ${gitPath}`)
+if (exec(`git clone ${gitPath}`).code !== 0) {
+  echo('Error: clone fail')
+  exit(1)
+}
 
 // 安装依赖
 cd(projectName)
-exec('npm install')
+echo('开始下载依赖')
+if (exec('npm install').code !== 0) {
+  echo('Error: npm install fail')
+  exit(1)
+}
 exit()

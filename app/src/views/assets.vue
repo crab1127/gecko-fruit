@@ -1,6 +1,6 @@
 <template>
-  <main>
-    <el-button type="primary" @click="handleAdd()">
+  <main class="assets-container">
+    <el-button type="primary" @click="handleAdd()" icon="plus" class="btn-add-assets">
       添加资产
     </el-button>
     <el-table
@@ -97,15 +97,37 @@
         }
       },
       handleDelete(index, row) {
-        this.$store.commit('ASSETS_DELETE', row)
+        this.$confirm('(╥╯^╰╥) 主人饶命啊～～', '(╯#-_-)╯~~~~~~~~~╧═╧ ', {
+          confirmButtonText: '要你何用',
+          cancelButtonText: '饶你狗命',
+          type: 'info'
+        }).then(
+          _ => {
+            this.$store.commit('ASSETS_DELETE', row)
+            this.$message({
+              message: '╰（‵□′）╯ 我还会回来的！！'
+            });
+          }, 
+          _ => {
+            this.$message({
+              message: '✿◡‿◡ 感谢主子不杀之恩!'
+            });
+          }
+        )
       },
       ftpLink(ftp) {
         const c = new Client()
 
         c.on('ready', _ => {
-          alert('连接成功')
+          this.$message({
+            message: ':.ﾟヽ(｡◕‿◕｡)ﾉﾟ.:｡+ﾟ  主子, 成功了',
+            type: 'success'
+          });
         })
-        c.on('error', err => console.log(err))
+        c.on('error', err => this.$message({
+          message: '(..•˘_˘•..)  主子, 失败了 ',
+          type: 'error'
+        }))
 
         c.connect({
           host: ftp.ip,
@@ -117,3 +139,15 @@
     }
   }
 </script>
+<style type="text/css">
+  .assets-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .btn-add-assets {
+    width: 200px;
+    margin-bottom: 30px;
+  }
+</style>
