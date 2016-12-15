@@ -19,6 +19,7 @@
   },
   "author": "Greg Holguin <simulatedgreg@gmail.com>",
   "license": "MIT",
+  "git": "https://github.com/crab1127/gecko-fruit.git",
   "devDependencies": {
     "babel-core": "^6.8.0",
     "babel-loader": "^6.2.4",
