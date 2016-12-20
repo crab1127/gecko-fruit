@@ -1,6 +1,7 @@
 /**
  * 项目
  */
+import { getRandom } from '../../util/common'
 
 let defaultMain = []
 let defaultPublishLog = {}
@@ -20,7 +21,7 @@ const state = {
 
 const mutations = {
   PROJECT_ADD (state, data) {
-    data.id = +new Date()
+    data.id = getRandom()
     state.main.push(data)
     localStorage['PROJECT'] = JSON.stringify(state.main)
   },

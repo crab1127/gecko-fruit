@@ -3,14 +3,14 @@
     <el-form-item label="主机名">
       <el-input v-model="form.name"></el-input>
     </el-form-item>
-    <el-form-item label="ip">
-      <el-input v-model="form.ip"></el-input>
+    <el-form-item label="host">
+      <el-input v-model="form.host"></el-input>
     </el-form-item>
     <el-form-item label="端口">
       <el-input v-model="form.port"></el-input>
     </el-form-item>
     <el-form-item label="账号">
-      <el-input v-model="form.account"></el-input>
+      <el-input v-model="form.user"></el-input>
     </el-form-item>
     <el-form-item label="密码">
       <el-input v-model="form.password"></el-input>

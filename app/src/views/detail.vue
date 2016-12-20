@@ -92,7 +92,7 @@
         <el-button type="primary" @click="onPublish" :loading="loading">确定发布</el-button>
       </span>
     </el-dialog>
-  </main> 
+  </main>
 </template>
 
 <script>
@@ -101,6 +101,7 @@
   import path from 'path'
   import ftpUpload from '../util/ftp-upload'
   import { getRandom, dateFormat } from '../util/common'
+  const appPath = require('electron').remote().app().getAppPath()
 
   export default {
     name: 'detail',
@@ -173,7 +174,7 @@
       onPublish() {
         this.loading = true
         const branchName = this.environment === 'sit' ? 'develop' : 'master'
-        const node = `node ./app/src/util/shell-project-package.js ${this.projectName} ${branchName}`
+        const node = `node ${path.join(appPath, './src/util/shell-project-package.js')}  ${this.projectName} ${branchName}`
         ipcRenderer.send('shell:exec', node)
       },
       onFtpUpload() {

@@ -21,7 +21,7 @@
 
 <script>
   import { mapGetters } from 'vuex'
-
+  const appPath = require('electron').remote().app().getAppPath()
   import editProject from './add-project'
   export default {
     name: 'project',

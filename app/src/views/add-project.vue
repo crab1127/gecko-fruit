@@ -127,7 +127,7 @@
         this.cmdContent.push('~~~~~end~~~~~~~')
         this.sublimeLoding = false
         if (data === 0) {
-          this.$store.commit(commitType, this.form)
+          this.$store.commit('PROJECT_ADD', this.form)
           this.success('new')
         } else {
           this.initStatus = true

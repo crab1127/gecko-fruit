@@ -130,9 +130,9 @@
         }))
 
         c.connect({
-          host: ftp.ip,
+          host: ftp.host,
           port: ftp.port,
-          user: ftp.account,
+          user: ftp.user,
           password: ftp.password
         })
       }

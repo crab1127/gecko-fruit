@@ -22,10 +22,12 @@ cd('/Users/my/Web/project/' + projectName)
 // 更新最新代码
 exec('git checkout develop')
 
-if (exec('git pull origin develop').code !==0) {
-  echo('Error: 分支更新代码失败')
-  exit(1)
-}
+const pull = exec('git pull origin develop')
+console.log(pull)
+// if(.code !==0) {
+//   echo('Error: 分支更新代码失败')
+//   exit(1)
+// }
 
 // 测试上线
 // if (branchName === 'develop') {

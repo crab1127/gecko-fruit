@@ -17,6 +17,7 @@ if (process.env.NODE_ENV === 'development') {
   config.devtron = false
   config.url = `file://${__dirname}/dist/index.html`
 }
+const shelljsFilePath = path.join(__dirname, './src/util') 
 
 function createWindow () {
   // shell 放在主进程中

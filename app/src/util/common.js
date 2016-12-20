@@ -1,3 +1,6 @@
+const path = require('path')
+const fs = require('fs')
+
 // 获取谁数据
 export const getRandom = function(len = 8) {
   const chars = ['0','1','2','3','4','5','6','7','8','9',
@@ -39,4 +42,28 @@ export const dateFormat = (date, fmt) => {
     }
   }
   return fmt
+}
+
+/**
+ * 遍历文件夹，
+ * return 目录和文件数组
+ */
+export const getFileAndDir = dir => {
+  const dirs = []
+  const files = []
+  const backCall = localDir => {
+    const dir = fs.readdirSync(localDir)
+    dir.forEach(item => {
+      const p = path.join(localDir, item)
+      const stat = fs.statSync(p)
+      if (stat.isDirectory()) {
+        dirs.push(p)
+        call(p)
+      } else {
+        files.push(p)
+      }
+    })
+  }
+  backCall(dir)
+  return {dirs, files}
 }

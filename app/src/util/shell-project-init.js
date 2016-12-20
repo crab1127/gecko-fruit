@@ -19,7 +19,7 @@ if (exec(`git clone ${gitPath}`).code !== 0) {
   echo('Error: clone fail')
   exit(1)
 }
-
+echo('克隆项目成功')
 // 安装依赖
 cd(projectName)
 echo('开始下载依赖')

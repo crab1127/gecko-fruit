@@ -2,16 +2,47 @@ const fs = require('fs')
 const path = require('path')
 const ftpClient = require('ftp')
 
+const { getFileAndDir } = require('./common')
+
 const ftp = new ftpClient()
 let fileNum = 0
 let ftpFileNum = 0
 
+
 export default function (projectPath, originPath, ftpOptions) {
+  let ftpSet = {
+    host: ftpOptions.host,
+    port: ftpOptions.port,
+    user: ftpOptions.user,
+    password: ftpOptions.password
+  }
+  // const logFiles = (dirPath) => {
+  //   fs.readdir(dirPath, (err, resfiles) => {
+  //     if (err || !resfiles || !resfiles.length) return
+  //     resfiles.forEach(file => {
+  //       const filePath = path.join(dirPath, file)
+  //       fs.stat(filePath, (err, res)=> {
+  //         if (res.isDirectory) {
+  //           dirs.push(filePath)
+  //           logFiles(filePath)
+  //         } else {
+  //           files.push(filePath)
+  //         }
+  //       })
+  //     })
+  //   })
+  // }
+  console.log(ftpSet)
+  const {dirs, files} = getFileAndDir(projectPath)
+
   return new Promise((resolve, reject) => {
-    
+
     const ftpPuhlish = function(dirPath, oriPath) {
-      fs.readdir(dirPath, (err, files) => {
-        console.log(1, dirPath, files)
+      dirs.forEach(dir => {
+        // ftp.mkdir(dir, file) {
+        //
+        // }
+      })
         if (err || !files || !files.length) return
         files.forEach(file => {
           fs.stat(path.join(dirPath, file), (err, res) => {
@@ -45,6 +76,6 @@ export default function (projectPath, originPath, ftpOptions) {
         ftpPuhlish(projectPath, originPath)
       })
       .on('error', _ => reject('连接ftp失败'))
-      .connect(ftpOptions)
+      .connect(ftpSet)
   })
 }
