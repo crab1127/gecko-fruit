@@ -20,7 +20,7 @@ if (exec(`git clone ${gitPath}`).code !== 0) {
   exit(1)
 }
 echo('克隆项目成功')
-// 安装依赖
+  // 安装依赖
 cd(projectName)
 echo('开始下载依赖')
 if (exec('npm install').code !== 0) {

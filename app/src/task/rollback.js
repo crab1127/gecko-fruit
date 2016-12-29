@@ -9,4 +9,4 @@ exec('npm install')
 echo('发布')
 exec('npm run build')
 
-exit() 
+exit()

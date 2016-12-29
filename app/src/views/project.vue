@@ -20,8 +20,9 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
-  const appPath = require('electron').remote().app().getAppPath()
+  import {
+    mapGetters
+  } from 'vuex'
   import editProject from './add-project'
   export default {
     name: 'project',
@@ -38,11 +39,15 @@
     methods: {
       handleAdd() {
         this.$store.commit('SET_ACTIVE_PROJECT', {})
-        this.$router.push({'name': 'add-project'})
+        this.$router.push({
+          'name': 'add-project'
+        })
       },
       handleEdit(index, row) {
         this.$store.commit('SET_ACTIVE_PROJECT', row)
-        this.$router.push({'name': 'add-project'})
+        this.$router.push({
+          'name': 'add-project'
+        })
       },
       handleDelete(index, row) {
         this.$store.commit('PROJECT_DELETE', row)
@@ -50,7 +55,9 @@
       handleDetail(index, row) {
         console.log(row)
         this.$store.commit('SET_ACTIVE_PROJECT', row)
-        this.$router.push({'name': 'detail'})
+        this.$router.push({
+          'name': 'detail'
+        })
       }
     },
     components: {
@@ -60,16 +67,18 @@
 </script>
 
 <style type="text/css">
-  .project-container{
+  .project-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
+  
   .add-project {
     width: 200px;
     margin-bottom: 30px;
   }
+  
   .project-main {
     flex: 1;
     width: 100%;

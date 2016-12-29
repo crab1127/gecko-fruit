@@ -37,10 +37,10 @@
           <el-input v-model="form.sit_pwd"></el-input>
         </el-form-item>
       </template>
-      <el-form-item label="正式环境">
-        <el-switch on-text="" off-text="" v-model="form.sec" @change="changSec" />
-      </el-form-item>
-      <template v-if="form.sec">
+<el-form-item label="正式环境">
+  <el-switch on-text="" off-text="" v-model="form.sec" @change="changSec" />
+</el-form-item>
+<template v-if="form.sec">
         <el-form-item label="ip">
           <el-select v-model="form.sec_ip" placeholder="请选择">
             <el-option
@@ -54,20 +54,33 @@
           <el-input v-model="form.sec_pwd"></el-input>
         </el-form-item>
       </template>
-      <el-form-item>
-        <el-button type="primary" :loading="sublimeLoding" @click="onSubmit">立即创建</el-button>
-        <el-button type="text" v-show="initStatus || sublimeLoding" @click="cmdVisible = true">详情</el-button> 
-      </el-form-item>
-    </el-form>
-    <cmd v-model="cmdVisible" :content="cmdContent"/>
-  </main>
+<el-form-item>
+  <el-button type="primary" :loading="sublimeLoding" @click="onSubmit">立即创建</el-button>
+  <el-button type="text" v-show="initStatus || sublimeLoding" @click="cmdVisible = true">详情</el-button>
+</el-form-item>
+</el-form>
+<cmd v-model="cmdVisible" :content="cmdContent" />
+</main>
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
-  import { ipcRenderer } from 'electron'
+  import path from 'path'
+  import {
+    mapGetters
+  } from 'vuex'
+  import {
+    ipcRenderer,
+    remote
+  } from 'electron'
   import Cmd from '../components/cmd'
-  // const defaultFrom = 
+
+
+  let appPath
+  ipcRenderer.send('dirname')
+  ipcRenderer.on('dirname', (event, data) => {
+    appPath = data
+  })
+
   export default {
     name: 'add-assets',
     computed: {
@@ -80,7 +93,7 @@
         return !this.activeproject.git ? true : false
       }
     },
-    data () {
+    data() {
       return {
         sublimeLoding: false,
         cmdVisible: false,
@@ -94,21 +107,6 @@
           sec: true
         },
         cmdContent: ['~~~~~~~~~start~~~~~~~~']
-        // rules: {
-        //   name: [
-        //     { required: true, message: '请输入项目名称', trigger: 'blur' },
-        //     { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }
-        //   ],
-        //   git: [
-        //     { required: true, message: '请输入git地址', trigger: 'blur' },
-        //   ],
-        //   gitBranchMaster: [
-        //     { required: true, message: '请输入主分支', trigger: 'blur' },
-        //   ],
-        //   gitBranchDevelop: [
-        //     { required: true, message: '请输入开发分支', trigger: 'blur' },
-        //   ]
-        // }
       }
     },
     mounted() {
@@ -117,11 +115,11 @@
 
       ipcRenderer.on('shell:exec:stdout', (event, data) => {
         this.cmdContent.push(data)
-        console.log('stdout',data)
+        console.log('stdout', data)
       });
       ipcRenderer.on('shell:exec:stderr', (event, data) => {
         this.cmdContent.push(data)
-        console.log('stderr',data)
+        console.log('stderr', data)
       });
       ipcRenderer.on('shell:close', (event, data) => {
         this.cmdContent.push('~~~~~end~~~~~~~')
@@ -151,7 +149,8 @@
         let commitType = this.form.id ? 'PROJECT_UPDATE' : 'PROJECT_ADD'
         if (this.isNew) {
           this.sublimeLoding = true
-          ipcRenderer.send('shell:exec', `node ./app/src/util/shell-project-init.js ${this.form.git}`)
+          const command = `node ${path.join(appPath, './src/task/init-project.js')} ${this.form.git}`
+          ipcRenderer.send('shell:exec', command)
         } else {
           this.$store.commit(commitType, this.form)
           this.success('update')
@@ -163,7 +162,9 @@
           message: msg,
           type: 'success'
         });
-        setTimeout(_ => this.$router.push({'name': 'project'}), 3000)
+        setTimeout(_ => this.$router.push({
+          'name': 'project'
+        }), 3000)
       },
       fail() {
         this.$message({
@@ -181,7 +182,8 @@
   .add-project-container {
     margin-right: 150px;
   }
-  .line{
+  
+  .line {
     text-align: center;
   }
 </style>

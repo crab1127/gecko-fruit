@@ -17,35 +17,43 @@ if (process.env.NODE_ENV === 'development') {
   config.devtron = false
   config.url = `file://${__dirname}/dist/index.html`
 }
-const shelljsFilePath = path.join(__dirname, './src/util') 
+const shelljsFilePath = path.join(__dirname, './src/util')
 
-function createWindow () {
+// var cookie = { url: 'http://www.github.com', name: 'dirname', value: __dirname }
+// electron.session.defaultSession.cookies.set(cookie, function(error) {
+//   if (error) console.error(error)
+// })
+
+function createWindow() {
   // shell 放在主进程中
+  ipcMain.on('dirname', (event) => {
+    event.sender.send('dirname', __dirname)
+  })
   ipcMain.on('shell:which', (event, command) => {
     event.sender.send('shell:which', shell.which(command))
   })
   ipcMain.on('shell:exec', (event, ...commands) => {
-    const promises = commands.map(command => {
-      new Promise((resolve, reject) => {
-        const child = shell.exec(command, { async: true, silent: true })
+      const promises = commands.map(command => {
+        new Promise((resolve, reject) => {
+          const child = shell.exec(command, { async: true, silent: true })
 
-        child.stdout.on('data', data => {
-          event.sender.send('shell:exec:stdout', data)
-        })
-        child.stderr.on('data', data => {
-          event.sender.send('shell:exec:stderr', data)
-        })
-        child.on('close', data => {
-          event.sender.send('shell:close', data)
-          resolve()
+          child.stdout.on('data', data => {
+            event.sender.send('shell:exec:stdout', data)
+          })
+          child.stderr.on('data', data => {
+            event.sender.send('shell:exec:stderr', data)
+          })
+          child.on('close', data => {
+            event.sender.send('shell:close', data)
+            resolve()
+          })
         })
       })
+      Promise.all(promises).then(() => event.sender.send('shell:close:all'))
     })
-    Promise.all(promises).then(() => event.sender.send('shell:close:all'))
-  })
-  /**
-   * Initial window options
-   */
+    /**
+     * Initial window options
+     */
   mainWindow = new BrowserWindow({
     height: 600,
     width: 800

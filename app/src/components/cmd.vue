@@ -20,7 +20,7 @@
         default: []
       }
     },
-    data () {
+    data() {
       return {
         visible: false
       }
@@ -46,16 +46,19 @@
   }
 </script>
 <style>
-  .cmd-container{
+  .cmd-container {
     position: fixed;
-    top: 0; right: 0; 
-    bottom: 0; left: 0;
-    z-index: 21;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2200;
     padding: 20px;
     overflow-y: auto;
-    background: rgba(20,20,20, .9);
+    background: rgba(20, 20, 20, .9);
     color: #fff;
   }
+  
   .cmd-close {
     position: absolute;
     top: 0;
