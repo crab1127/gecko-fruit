@@ -55,6 +55,7 @@
       handleDetail(index, row) {
         console.log(row)
         this.$store.commit('SET_ACTIVE_PROJECT', row)
+        this.$store.commit('ACTIVE_PUBLISH_LOG', row.id)
         this.$router.push({
           'name': 'detail'
         })

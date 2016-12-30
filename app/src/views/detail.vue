@@ -2,7 +2,7 @@
   <main>
     <el-tabs :active-name="environment" style="width: 100%;">
       <el-tab-pane label="测试环境" name="sit">
-        <el-button type="primary" @click="(dialogVisible = true, environment= 'sit')">
+        <el-button type="primary" @click="(dialogVisible = true, environment= 'sit')" :loading="loading">
           发布到测试环境
         </el-button>
         <el-table :data="sitLogFilter">
@@ -11,7 +11,11 @@
             label="状态"
             width="80"
           >
-            <span style="font-size:20px">😓</span>
+            <div>
+              <i class="el-icon-loading" v-if="row.status === 'loading'"></i>
+              <span style="font-size:20px" v-if="row.status === 'success'">😎</span>
+              <span style="font-size:20px" v-if="row.status === 'error'">😓</span>
+            </div>
           </el-table-column>
           <el-table-column
             prop="version"
@@ -27,56 +31,45 @@
             width="180">
             <div>{{ row.createTime | dateFormat('yyyy-MM-dd hh:mm') }}</div>
           </el-table-column>
+          <el-table-column
+            inline-template
+            label="操作"
+            width="100">
+            <el-button type="text" size="small" @click="onShowLog(row)">
+              日志
+            </el-button>
+          </el-table-column>
         </el-table>
-        <el-pagination
-          small
-          :total="sitLog.length"
-          :current-page="sitLogPages.current"
-          @current-change="onSitPageChange">
+        <el-pagination small :total="sitLog.length" :current-page="sitLogPages.current" @current-change="onSitPageChange">
         </el-pagination>
       </el-tab-pane>
       <el-tab-pane label="正式环境" name="sec">
-        <el-button type="primary"  @click="(dialogVisible = true, environment= 'sec')">
+        <el-button type="primary" @click="(dialogVisible = true, environment= 'sec')">
           发布到正式环境
         </el-button>
         <el-table :data="secLogFilter">
-          <el-table-column
-            inline-template    
-            label="状态"
-            width="80"
-          >
-            <span style="font-size:20px">😓</span>
+          <el-table-column inline-template label="状态" width="80">
+            <div>
+              <i class="el-icon-loading" v-if="row.status === 'loading'"></i>
+              <span style="font-size:20px" v-if="row.status === 'success'">😎</span>
+              <span style="font-size:20px" v-if="row.status === 'error'">😓</span>
+            </div>
           </el-table-column>
-          <el-table-column
-            prop="version"
-            label="版本">
+          <el-table-column prop="version" label="版本">
           </el-table-column>
-          <el-table-column
-            prop="message"
-            label="上传说明">
+          <el-table-column prop="message" label="上传说明">
           </el-table-column>
-          <el-table-column
-            inline-template
-            label="时间"
-            width="180">
+          <el-table-column inline-template label="时间" width="180">
             <div>{{ row.createTime | dateFormat('yyyy-MM-dd hh:mm') }}</div>
           </el-table-column>
-          <el-table-column
-            inline-template
-            :context="_self"
-            fixed="right"
-            label="操作"
-            width="100">
-            <span>
+          <el-table-column inline-template label="操作" width="100">
+            <div>
+              <el-button type="text" size="small" @click="onShowLog(row)">日志</el-button>
               <el-button type="text" size="small">回滚</el-button>
-            </span>
+            </div>
           </el-table-column>
         </el-table>
-        <el-pagination
-          small
-          :total="secLog.length"
-          :current-page="secLogPages.current"
-          @current-change="onSecPageChange">
+        <el-pagination small :total="secLog.length" :current-page="secLogPages.current" @current-change="onSecPageChange">
         </el-pagination>
       </el-tab-pane>
     </el-tabs>
@@ -86,18 +79,13 @@
           <el-input v-model="form.version" placeholder="v1.0.0"></el-input>
         </el-form-item>
         <el-form-item label="发布说明">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            placeholder="请输入内容"
-            v-model="form.message">
+          <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容" v-model="form.message">
           </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button @click="cmdVisible = true">详情</el-button>
-        <el-button type="primary" @click="onPublish" :loading="loading">确定发布</el-button>
+        <el-button type="primary" @click="onPublish">确定发布</el-button>
       </span>
     </el-dialog>
     <cmd v-model="cmdVisible" :content="cmdContent" />
@@ -133,11 +121,24 @@
     computed: {
       ...mapGetters({
         activeProject: 'activeProject',
+        activeLog: 'activeLog',
         log: 'activeLog',
-        assets: 'assets',
-        sitLog: 'sitLog',
-        secLog: 'secLog'
+        assets: 'assets'
       }),
+      sitLog() {
+        if (this.activeLog && this.activeLog.length) {
+          return this.activeLog.filter(item => item.environment === 'sit')
+        } else {
+          return []
+        }
+      },
+      secLog() {
+        if (this.activeLog && this.activeLog.length) {
+          return this.activeLog.filter(item => item.environment === 'sec')
+        } else {
+          return []
+        }
+      },
       projectName() {
         let git = this.activeProject.git
         return git.slice(git.lastIndexOf('/') + 1, git.lastIndexOf('.'))
@@ -167,27 +168,30 @@
           message: '',
           version: ''
         },
-        cmdContent: ['~~~~~~~~~start~~~~~~~~']
+        cmdContent: [],
+        publishStdout: ['~~~~~~~~~start~~~~~~~~']
       }
     },
     mounted() {
+      console.log('detail')
       if (!this.activeProject.id) {
         this.$router.replace({
           name: 'project'
         })
       }
-      console.log('detail')
+
+      // 执行命令监听函数
       ipcRenderer
         .on('shell:exec:stdout', (event, data) => {
           console.log('stdout', data)
-          this.cmdContent.push(data)
+          this.publishStdout.push(data)
         })
         .on('shell:exec:stderr', (event, data) => {
           console.log('stderr', data)
-          this.cmdContent.push(data)
+          this.publishStdout.push(data)
         })
         .on('shell:close', (event, data) => {
-          data === 0 && (this.cmdContent.push('打包完毕, 开始上传'), this.upload())
+          data === 0 && (this.publishStdout.push('打包完毕, 开始上传'), this.upload())
         })
     },
     destroyed() {
@@ -202,12 +206,23 @@
       onSecPageChange(val) {
         this.secLogPages.current = val
       },
-
+      onShowLog(item) {
+        console.log(1234, item)
+        if (item.status === 'loading') {
+          this.cmdContent = this.publishStdout
+        } else {
+          this.cmdContent = item.log
+        }
+        this.cmdVisible = true
+      },
       // 执行打包任务
       onPublish() {
         this.loading = true
+        this.cmdContent = []
+        this.publishStdout = ['~~~~~~~~~start~~~~~~~~']
+        this.commitLog()
         const branchName = this.environment === 'sit' ? 'develop' : 'master'
-        const node = `node ${path.join(appPath, './src/task/package-project.js')}  ${this.projectName} ${branchName} ${this.form.message} ${this.form.version}`
+        const node = `node ${path.join(appPath, './src/task/package-project.js')} ${this.projectName} ${branchName} ${this.form.message} ${this.form.version}`
         ipcRenderer.send('shell:exec', node)
           // this.upload()
       },
@@ -227,48 +242,31 @@
 
         this.ftp(ftpOption, projectPath, originPath, fileAndDir)
       },
-      ftp(ftpOption, projectPath, originPath, fileAndDir) {
-        connect(ftpOption).then(
-          ftp => {
-            let count = 0
-            fileAndDir.dirs.forEach(item => {
-              ftp.mkdir(path.join(originPath, item.replace(projectPath, '')), (err) => {
-                count++
-                if (!err) {
-                  this.cmdContent.push('success:' + item.replace(projectPath, '') + '上传成功')
-                }
-                if (count === (fileAndDir.dirs.length + fileAndDir.files.length)) {
-                  this.commitLog()
-                }
-              })
-            })
-
-            fileAndDir.files.forEach(item => {
-              ftp.put(item, path.join(originPath, item.replace(projectPath, '')), err => {
-                count++
-                if (!err) {
-                  this.cmdContent.push('success:' + item.replace(projectPath, '') + '上传成功')
-                }
-                if (count === (fileAndDir.dirs.length + fileAndDir.files.length)) {
-                  this.commitLog()
-                }
-              })
-            })
-
-          },
-          err => console.error(err)
-        )
-      },
-      // 提交日志
-      commitLog() {
+      uploadFinish() {
+        this.loading = false
         this.$message({
           message: `文件上传完毕`,
           type: 'success'
         });
-        let log = {
+        const log = {
           key: this.activeProject.id,
           value: {
-            id: getRandom(),
+            id: this.uploadId,
+            status: 'success',
+            endTime: +new Date(),
+            log: this.publishStdout
+          }
+        }
+        this.$store.commit('UPDATE_PUBLISH_LOG', log)
+      },
+      // 提交日志
+      commitLog() {
+        this.uploadId = getRandom()
+        const log = {
+          key: this.activeProject.id,
+          value: {
+            id: this.uploadId,
+            status: 'loading',
             environment: this.environment,
             message: this.form.message,
             version: this.form.version,
@@ -278,7 +276,37 @@
         this.$store.commit('PUBLISH_LOG', log)
         this.$store.commit('ACTIVE_PUBLISH_LOG', this.activeProject.id)
         this.dialogVisible = false
-        this.loading = false
+      },
+      ftp(ftpOption, projectPath, originPath, fileAndDir) {
+        connect(ftpOption).then(
+          ftp => {
+            let count = 0
+            fileAndDir.dirs.forEach(item => {
+              ftp.mkdir(path.join(originPath, item.replace(projectPath, '')), (err) => {
+                count++
+                if (!err) {
+                  this.publishStdout.push('success:' + item.replace(projectPath, '') + '上传成功')
+                }
+                if (count === (fileAndDir.dirs.length + fileAndDir.files.length)) {
+                  this.uploadFinish()
+                }
+              })
+            })
+
+            fileAndDir.files.forEach(item => {
+              ftp.put(item, path.join(originPath, item.replace(projectPath, '')), err => {
+                count++
+                if (!err) {
+                  this.publishStdout.push('success:' + item.replace(projectPath, '') + '上传成功')
+                }
+                if (count === (fileAndDir.dirs.length + fileAndDir.files.length)) {
+                  this.uploadFinish()
+                }
+              })
+            })
+          },
+          err => console.error(err)
+        )
       }
     },
     filters: {

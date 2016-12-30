@@ -1,5 +1,8 @@
 require('shelljs/global')
 
+let projectName = process.argv[2]
+let version = process.argv[3]
+
 echo('切换到该版本')
 exec('git checkout ');
 

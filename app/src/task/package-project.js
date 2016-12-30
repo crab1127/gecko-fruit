@@ -23,17 +23,8 @@ cd('/Users/my/Web/project/' + projectName)
 // 更新最新代码
 exec('git checkout develop')
 
-const pull = exec('git pull origin develop')
-console.log(pull)
-  // if(.code !==0) {
-  //   echo('Error: 分支更新代码失败')
-  //   exit(1)
-  // }
+exec('git pull origin develop')
 
-// 测试上线
-// if (branchName === 'develop') {
-//   exec('npm run build')
-// } else 
 // 发布正式环境 合并分支
 if (branchName === 'master') {
   exec('git checkout master')
